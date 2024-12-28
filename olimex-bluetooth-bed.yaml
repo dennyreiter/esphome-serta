@@ -1,0 +1,103 @@
+substitutions:
+  name: olimex-bluetooth-bed-proxy
+  friendly_name: Bedroom Bluetooth Proxy
+  log_level: DEBUG
+  bed_mac_address: "7C:FF:FF:FF:FF:FF"
+  bed_name: "Serta"
+  s_uuid: "0000ffe5-0000-1000-8000-00805f9b34fb"
+  c_uuid: "0000ffe9-0000-1000-8000-00805f9b34fb"
+
+packages:
+  esphome.bluetooth-proxy: github://esphome/firmware/bluetooth-proxy/olimex-esp32-poe-iso.yaml@main
+esphome:
+  name: ${name}
+  name_add_mac_suffix: false
+  friendly_name: ${friendly_name}
+
+globals:
+  - id: ble_client_connected
+    type: bool
+    initial_value: 'false'
+
+api:
+
+bluetooth_proxy:
+  active: true
+
+logger:
+
+ble_client:
+  - mac_address: ${bed_mac_address}
+    id: serta_1
+    on_connect:
+      then:
+        # Update the Bed Connection Status
+        - lambda: |-
+            id(ble_client_connected) = true;
+            ESP_LOGD("ble_client_lambda", "${bed_name}");
+        - delay: 5s
+            
+    on_disconnect:
+      then:
+        - lambda: |-
+            id(ble_client_connected) = false;
+            ESP_LOGD("ble_client_lambda", "${bed_name}");
+
+binary_sensor:
+  # Presence based on MAC address
+  - platform: ble_presence
+    mac_address: ${bed_mac_address}
+    name: "${bed_name} BLE Status"
+
+  # Bed Bluetooth Connection Status
+  - platform: template
+    name: '${bed_name} Connection'
+    id: bed_connection
+    lambda: 'return id(ble_client_connected);'
+
+sensor:
+  # RSSI based on MAC address
+  - platform: ble_rssi
+    mac_address: ${bed_mac_address} 
+    name: "${bed_name} BLE RSSI"
+
+button:  
+
+  - platform: template
+    name: "${bed_name} Flat"
+    id: bed_flat
+    icon: "mdi:file-account"
+    on_press:
+      then:
+        - ble_client.ble_write:
+            id: serta_1
+            service_uuid: ${s_uuid}
+            characteristic_uuid: ${c_uuid}
+            value: [0xe5, 0xfe, 0x16, 0x00, 0x00, 0x00, 0x08, 0xfe]
+        - logger.log: "Set Bed Flat"
+
+  - platform: template
+    name: "${bed_name} Head Up"
+    id: bed_head_up
+    icon: "mdi:file-account"
+    on_press:
+      then:
+        - ble_client.ble_write:
+            id: serta_1
+            service_uuid: ${s_uuid}
+            characteristic_uuid: ${c_uuid}
+            value: [0xe5, 0xfe, 0x16, 0x00, 0x80, 0x00, 0x00, 0x86]
+        - logger.log: "Set Bed Head Up"
+
+  - platform: template
+    name: "${bed_name} Zero G"
+    id: bed_zerog
+    icon: "mdi:file-account"
+    on_press:
+      then:
+        - ble_client.ble_write:
+            id: serta_1
+            service_uuid: ${s_uuid}
+            characteristic_uuid: ${c_uuid}
+            value: [0xe5, 0xfe, 0x16, 0x00, 0x10, 0x00, 0x00, 0xf6]
+        - logger.log: "Set Bed to ZeroG"
