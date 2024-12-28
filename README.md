@@ -4,7 +4,7 @@ An esphome configuration to control a Serta bed with Bluetooth
 
 I have an older project, [mqtt-bed](https://github.com/dennyreiter/mqtt-bed/tree/main), which used a Raspberry Pi zero and Python. I've been wanting to get it working on an ESP32 forever, and finally put some effort into it over the Holiday.
 
-I've only implemented the Serta commands, and not even all of them yet, and used a PoE powered Olimex board as I want it to also be a Bluetooth proxy to use with Bermuda.
+I've only implemented the Serta commands, and not even all of them yet, and used a PoE powered Olimex board as I want it to also be a Bluetooth proxy to use with Bermuda. It should work on a wifi board, as well.
 
 ### Bed address
 There are numerous ways to get the address for your bed. If you can already control the bed via your phone, check the list of paired bluetooth devices, and find the address for your bed's connection in the format `00:00:00:00:00:00`. 
