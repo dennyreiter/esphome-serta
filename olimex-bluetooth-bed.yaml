@@ -101,3 +101,55 @@ button:
             characteristic_uuid: ${c_uuid}
             value: [0xe5, 0xfe, 0x16, 0x00, 0x10, 0x00, 0x00, 0xf6]
         - logger.log: "Set Bed to ZeroG"
+# e5fe1600 20 00 00 e6
+  - platform: template
+    name: "${bed_name} Lounge"
+    id: bed_lounge
+    icon: "mdi:file-account"
+    on_press:
+      then:
+        - ble_client.ble_write:
+            id: serta_1
+            service_uuid: ${s_uuid}
+            characteristic_uuid: ${c_uuid}
+            value: [0xe5, 0xfe, 0x16, 0x00, 0x20, 0x00, 0x00, 0xe6]
+        - logger.log: "Set Bed to Lounge"
+# e5fe1600 40 0000 c6
+  - platform: template
+    name: "${bed_name} TV"
+    id: bed_tv
+    icon: "mdi:file-account"
+    on_press:
+      then:
+        - ble_client.ble_write:
+            id: serta_1
+            service_uuid: ${s_uuid}
+            characteristic_uuid: ${c_uuid}
+            value: [0xe5, 0xfe, 0x16, 0x00, 0x40, 0x00, 0x00, 0xc6]
+        - logger.log: "Set Bed to TV"
+# e5fe1600 01 0000 05 Head & Foot Massage
+  - platform: template
+    name: "${bed_name} Head & Foot Massage"
+    id: bed_head_foot_massage
+    icon: "mdi:file-account"
+    on_press:
+      then:
+        - ble_client.ble_write:
+            id: serta_1
+            service_uuid: ${s_uuid}
+            characteristic_uuid: ${c_uuid}
+            value: [0xe5, 0xfe, 0x16, 0x00, 0x01, 0x00, 0x00, 0x05]
+        - logger.log: "Start Bed Head & Foot Massage"
+# e5fe1600 02 0000 04 Massage Timer
+  - platform: template
+    name: "${bed_name} Massage Timer"
+    id: bed_massage_timer
+    icon: "mdi:file-account"
+    on_press:
+      then:
+        - ble_client.ble_write:
+            id: serta_1
+            service_uuid: ${s_uuid}
+            characteristic_uuid: ${c_uuid}
+            value: [0xe5, 0xfe, 0x16, 0x00, 0x02, 0x00, 0x00, 0x04]
+        - logger.log: "Increase Massage Timer"
